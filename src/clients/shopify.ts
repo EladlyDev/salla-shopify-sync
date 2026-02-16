@@ -212,6 +212,18 @@ class ShopifyClient {
         });
     }
 
+    async deleteWebhook(webhookId: number): Promise<void> {
+        return limiter.schedule(async () => {
+            console.debug(`[Shopify] DELETE /webhooks/${webhookId}.json`);
+            try {
+                await this.client.delete(`/webhooks/${webhookId}.json`);
+            } catch (error) {
+                this.handleError(`DELETE /webhooks/${webhookId}.json`, error);
+                throw error;
+            }
+        });
+    }
+
     // ── Helpers ─────────────────────────────────────────
 
     /**
