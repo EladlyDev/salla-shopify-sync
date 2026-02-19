@@ -218,6 +218,37 @@ class SallaClient {
         }, `GET /products/${sallaProductId}/variants`);
     }
 
+    /**
+     * Attach an image to a product by URL using Salla's Attach Image endpoint.
+     * This bypasses the inline image URL validation in the product create payload.
+     * The endpoint downloads the image from the URL server-side.
+     */
+    async attachImage(sallaProductId: number, imageUrl: string): Promise<any> {
+        return this.apiCall(async () => {
+            console.debug(`[Salla] POST /products/${sallaProductId}/images`);
+            const response = await this.client.post(`/products/${sallaProductId}/images`, {
+                original: imageUrl,
+            });
+            return response.data;
+        }, `POST /products/${sallaProductId}/images`);
+    }
+
+    /**
+     * Update a variant's stock quantity via Salla's variant update endpoint.
+     * Endpoint: PUT /products/variants/{variant_id}
+     * Also disables unlimited_quantity so the quantity is respected.
+     */
+    async updateVariantQuantity(sallaVariantId: number, quantity: number): Promise<any> {
+        return this.apiCall(async () => {
+            console.debug(`[Salla] PUT /products/variants/${sallaVariantId} qty=${quantity}`);
+            const response = await this.client.put(`/products/variants/${sallaVariantId}`, {
+                stock_quantity: quantity,
+                unlimited_quantity: false,
+            });
+            return response.data;
+        }, `PUT /products/variants/${sallaVariantId}`);
+    }
+
     // ── Stock / Inventory ─────────────────────────────
 
     /**
