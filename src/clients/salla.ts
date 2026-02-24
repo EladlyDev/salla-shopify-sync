@@ -249,6 +249,22 @@ class SallaClient {
         }, `PUT /products/variants/${sallaVariantId}`);
     }
 
+    /**
+     * Read a variant's current stock quantity.
+     * Endpoint: GET /products/variants/{variant_id}
+     * Returns { quantity, unlimited } for reconciliation checks.
+     */
+    async getVariantStock(sallaVariantId: number): Promise<{ quantity: number; unlimited: boolean }> {
+        return this.apiCall(async () => {
+            const response = await this.client.get(`/products/variants/${sallaVariantId}`);
+            const data = response.data?.data ?? response.data;
+            return {
+                quantity: data?.stock_quantity ?? 0,
+                unlimited: data?.unlimited_quantity ?? true,
+            };
+        }, `GET /products/variants/${sallaVariantId}`);
+    }
+
     // ── Stock / Inventory ─────────────────────────────
 
     /**
